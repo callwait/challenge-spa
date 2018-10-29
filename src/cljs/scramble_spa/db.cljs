@@ -1,0 +1,4 @@
+(ns scramble-spa.db)
+
+(def default-db
+  {:name "re-frame"})
