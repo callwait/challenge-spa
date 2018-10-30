@@ -15,4 +15,8 @@
   (testing "Test 3: katas / steak"
     (is (= (:body (dev-app (mock/request :get "/api" {:s1 "katas"
                                                       :s2 "steak"})))
+           "fail")))
+  (testing "Test 3: fo / foo"
+    (is (= (:body (dev-app (mock/request :get "/api" {:s1 "fo"
+                                                      :s2 "foo"})))
            "fail"))))
