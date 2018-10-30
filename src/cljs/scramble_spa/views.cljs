@@ -1,6 +1,7 @@
 (ns scramble-spa.views
   (:require
     [re-frame.core :as rf]
+    [clojure.string :as s]
     [scramble-spa.events :as events]
     [scramble-spa.subs :as subs]))
 
@@ -16,13 +17,14 @@
      [:div "Input 2: "
       [:input {:type      "text"
                :on-change #(rf/dispatch [::events/set-challenge :str2 (-> % .-target .-value)])}]]
-
      [:p "Scrambling "
       @str1
       (when @str2
         (str " and " @str2))]
-
-     [:p "Result: " (if @result
-                     [:b "TRUE"]
-                     [:i "false"])]
-     [:button {:on-click #(rf/dispatch [::events/scramble-it])} "Scramble it!"]]))
+     [:p "Result: "
+      (if @result
+        [:b "TRUE"]
+        [:i "false"])]
+     [:button {:disabled (or (s/blank? @str1)
+                             (s/blank? @str2))
+               :on-click #(rf/dispatch [::events/scramble-ajax])} "Scramble it!"]]))

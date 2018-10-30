@@ -1,6 +1,7 @@
 (ns scramble-spa.events
   (:require
     [re-frame.core :as rf]
+    [ajax.core :refer [GET]]
     [clojure.string :as s]
     [scramble-spa.db :as db]))
 
@@ -31,3 +32,28 @@
                    (clojure.set/subset? str2 str1))]
       {:db (->> result
                 (assoc db :challenge-result))})))
+
+(rf/reg-event-fx
+  ::scramble-ajax
+  (fn [{db :db}]
+    (GET
+      "/api"
+      {:params        {:s1 (get-in db [:challenge :str1] "")
+                       :s2 (get-in db [:challenge :str2] "")}
+       :handler       #(rf/dispatch [::process-response %1])
+       :error-handler #(rf/dispatch [::bad-response %1])})
+    {}))
+
+
+(rf/reg-event-db
+  ::process-response
+  (fn [db [_ response]]
+    (if (= response "success")
+      (assoc db :challenge-result true)
+      (assoc db :challenge-result false))))
+
+(rf/reg-event-db
+  ::bad-response
+  (fn [db [_]]
+    (assoc db :challenge-result false)))
+
